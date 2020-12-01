@@ -5,6 +5,9 @@ import axios from 'axios';
 class Modal extends React.Component  {
   constructor(props){
     super(props);
+    this.state = {
+      disabled: "disabled",
+    }
   }
 
   closeModal(e){
@@ -36,14 +39,27 @@ class Modal extends React.Component  {
     this.closeModal(e)
   }
 
+  async lengthCheck(e, id){
+    const title = document.querySelector(`#title_${id}`).value
+    const content = document.querySelector(`#content_${id}`).value
+    const err = document.querySelector('#error');
+    if (title.length < 10 || content < 20){
+      err.innerHTML = `Title should be at least 10 characters and Content 20 Xters.`;
+      document.querySelector(`#${id}`).setAttribute('disabled', 'disabled')
+    } else {
+      err.innerHTML = ``;
+      document.querySelector(`#${id}`).removeAttribute('disabled')
+    }
+  }
+
   render() {
     console.log(this.props)
     let note = this.props.info
     let loadNoteHtml = ''
     if(note == 'no item'){
-      loadNoteHtml = <div class="container"><form><div className="form-group"><label htmlFor="title_add">Title:</label><input type="text" className="form-control" id="title_add" placeholder="Enter title" name="title_add"/></div><div className="form-group"><label htmlFor="content_add">Content:</label><textarea className="form-control" id="content_add" placeholder="Enter Content" name="content_add"></textarea></div><button type="submit" id="add" className="btn btn-primary" onClick={(e) => { this.editCreateNoteModal(e, 0, 'add')}}>Add</button></form></div>
+      loadNoteHtml = <div className="container"><form><div className="form-group"><label htmlFor="title_add">Title:</label><input type="text" className="form-control" id="title_add" placeholder="Enter title" maxLength="50" name="title_add" onChange={(e) => this.lengthCheck(e, 'add')} /></div><div className="form-group"><label htmlFor="content_add">Content:</label><textarea className="form-control" id="content_add" placeholder="Enter Content" name="content_add" maxLength="1000" onChange={(e) => this.lengthCheck(e, "add")}></textarea></div><button type="submit" id="add" className="btn btn-primary" onClick={(e) => { this.editCreateNoteModal(e, 0, 'add')}}>Add</button></form></div>
     } else {
-      loadNoteHtml = <div className="container"><form><div className="form-group"><label htmlFor="title">Title:</label><input type="title" className="form-control" id="title_edit" placeholder="Enter title" name="title_edit" defaultValue={note.title}/></div><div className="form-group"><label htmlFor="content_edit">Content:</label><textarea className="form-control" id="content_edit" placeholder="Enter Content" name="content_edit" defaultValue={note.content}></textarea></div><button type="submit" className="btn btn-primary" id="edit" onClick={(e) => { this.editCreateNoteModal(e, note.id, 'edit')} }>Edit</button></form></div>
+      loadNoteHtml = <div className="container"><form><div className="form-group"><label htmlFor="title">Title:</label><input type="title" className="form-control" id="title_edit" placeholder="Enter title" maxLength="50" name="title_edit" defaultValue={note.title} onChange={(e) => this.lengthCheck(e, "edit")} /></div><div className="form-group"><label htmlFor="content_edit">Content:</label><textarea className="form-control" id="content_edit" placeholder="Enter Content" maxLength="1000" name="content_edit" onChange={(e) => this.lengthCheck(e, "edit")} defaultValue={note.content}></textarea></div><button type="submit" className="btn btn-primary" id="edit" onClick={(e) => { this.editCreateNoteModal(e, note.id, 'edit')} }>Edit</button></form></div>
     }
 
     return (
@@ -59,6 +75,7 @@ class Modal extends React.Component  {
 
             {/* Modal body */}
             <div className="modal-body">
+              <div id="error"></div>
               {loadNoteHtml}
             </div>
 
