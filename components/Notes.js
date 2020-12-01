@@ -46,7 +46,7 @@ class Notes extends React.Component {
 		return (
       <div className="container">
         <div className="row">
-          <span id="signal"></span>
+          <div id="signal"></div>
           <div className="col-8">
             <p>Table of My Note</p>
           </div>
